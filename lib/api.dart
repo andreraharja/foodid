@@ -2,22 +2,17 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
-Future<List<dynamic>?> getDataBrowseClaim(
-    {required Map body, required String token}) async {
+import 'model.dart';
+
+Future<List<DataBanner>?> getDataBanner() async {
   try {
-    Map<String, String> headersCollect = {
-      'Content-Type': 'application/json',
-      'x-access-token': token
-    };
-    final messageCollect =
-    jsonEncode({"topic": "TopicKafka.browseClaim", "message": body});
-    http.Response response = await http.post(Uri.parse("URL.searchRegister"),
-        headers: headersCollect, body: messageCollect);
+    http.Response response =
+        await http.get(Uri.parse("https://food.mockable.io/v1/banner"));
     final int statusCode = response.statusCode;
     if (statusCode == 200) {
-      final jsonData = json.decode(utf8.decode(response.bodyBytes));
-      List<dynamic> dataResult = [];
-      jsonData.map((i) => dataResult.add("THologramClaim.fromJson(i)")).toList();
+      final jsonData = json.decode(response.body);
+      List<DataBanner> dataResult = [];
+      jsonData['data'].map((i) => dataResult.add(DataBanner.fromJson(i))).toList();
       return dataResult;
     } else {
       return null;
